@@ -1,4 +1,4 @@
-# CRUD NestJS — POO 2026/1
+# CRUD NestJS — POO 2026/06
 
 API REST de CRUD de usuários com **NestJS**, **Prisma ORM** e **PostgreSQL**.
 
