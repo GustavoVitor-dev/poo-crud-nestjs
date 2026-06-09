@@ -1,5 +1,5 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateUserDto } from './create-user.dto';
+import { createZodDto } from 'nestjs-zod';
+import { CreateUserSchema } from './create-user.dto';
 
-// PartialType torna todos os campos de CreateUserDto opcionais para PATCH
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+// .partial() torna todos os campos opcionais para PATCH
+export class UpdateUserDto extends createZodDto(CreateUserSchema.partial()) {}

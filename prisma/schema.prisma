@@ -9,6 +9,101 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Genero {
+  ACAO
+  COMEDIA
+  DRAMA
+  TERROR
+  ROMANCE
+  FICCAO_CIENTIFICA
+  ANIMACAO
+  DOCUMENTARIO
+  THRILLER
+  AVENTURA
+}
+
+// ─── Modelos ──────────────────────────────────────────────────────────────────
+
+model Cinema {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  endereco String
+  salas    Sala[]
+  filmes   Filme[]
+  sessoes  Sessao[]
+}
+
+model Sala {
+  id         Int      @id @default(autoincrement())
+  numero     Int
+  capacidade Int
+  poltronas  Json     @default("[]")
+  cinemaId   Int
+  cinema     Cinema   @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
+  sessoes    Sessao[]
+}
+
+model Filme {
+  id                 Int       @id @default(autoincrement())
+  titulo             String
+  sinopse            String
+  classificacao      String
+  duracao            DateTime
+  elenco             String
+  genero             Genero
+  dataIniciaExibicao DateTime
+  dataFinalExibicao  DateTime
+  cinemaId           Int
+  cinema             Cinema    @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
+  sessoes            Sessao[]
+}
+
+model Sessao {
+  id              Int        @id @default(autoincrement())
+  horarioExibicao DateTime
+  filmeId         Int
+  filme           Filme      @relation(fields: [filmeId], references: [id])
+  salaId          Int
+  sala            Sala       @relation(fields: [salaId], references: [id])
+  cinemaId        Int
+  cinema          Cinema     @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
+  ingressos       Ingresso[]
+}
+
+model Ingresso {
+  id           Int     @id @default(autoincrement())
+  valorInteira Float
+  valorMeia    Float
+  sessaoId     Int
+  sessao       Sessao  @relation(fields: [sessaoId], references: [id])
+  pedidoId     Int?
+  pedido       Pedido? @relation(fields: [pedidoId], references: [id])
+}
+
+model Pedido {
+  id         Int           @id @default(autoincrement())
+  qtInteira  Int
+  qtMeia     Int
+  valorTotal Float
+  ingressos  Ingresso[]
+  lanches    LancheCombo[]
+}
+
+model LancheCombo {
+  id            Int     @id @default(autoincrement())
+  nome          String
+  descricao     String
+  valorUnitario Float
+  qtUnidade     Int
+  subtotal      Float
+  pedidoId      Int?
+  pedido        Pedido? @relation(fields: [pedidoId], references: [id])
+}
+
+// ─── Tutorial: User ───────────────────────────────────────────────────────────
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique

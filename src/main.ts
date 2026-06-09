@@ -1,26 +1,32 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ZodValidationPipe, cleanupOpenApiDoc } from 'nestjs-zod';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Ativa validação global dos DTOs
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ZodValidationPipe());
 
-  // Configuração do Swagger
   const config = new DocumentBuilder()
-    .setTitle('User CRUD API')
-    .setDescription('Documentação da API de Usuários com NestJS e Prisma')
+    .setTitle('Cinema CRUD API')
+    .setDescription('API de Cinema com NestJS, Prisma e Zod')
     .setVersion('1.0')
     .addTag('users')
+    .addTag('cinema')
+    .addTag('sala')
+    .addTag('filme')
+    .addTag('sessao')
+    .addTag('ingresso')
+    .addTag('pedido')
+    .addTag('lanche-combo')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // Swagger disponível em /api
+  const cleanedDocument = cleanupOpenApiDoc(document);
+  SwaggerModule.setup('api', app, cleanedDocument);
 
   await app.listen(3000);
-  console.log(`Application is running on: http://localhost:3000/api`);
+  console.log('Application is running on: http://localhost:3000/api');
 }
 bootstrap();
